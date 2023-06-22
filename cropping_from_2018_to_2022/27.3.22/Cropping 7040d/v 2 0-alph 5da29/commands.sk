@@ -1,0 +1,88 @@
+function formatNum(n: number) :: string:
+    set {_l::*} to split "k,M,B,T,Qn,Qi,Sx,Sp,Oc,No,De,Vi,Dv,Tv,Qv,Qiv,Sv,Spv,Ov,Nv,Dv" at ","
+    set {_i} to min(floor(log({_n})/3), size of {_l::*})
+    return "%{_n}%" if {_i} <= 0
+    set {_i2} to 1000^{_i}
+    return "%{_n}/{_i2}%%{_l::%{_i}%}%"
+
+command /givebp:
+	permission: op
+	permission message: h- how'd you find this?
+	trigger:
+		set slot 8 of player to 1 chest named "&7&lBackpack"
+		
+command /wipe [<player>]:
+	permission: op
+	trigger:
+		if {%arg-1%::wheat} is set:
+			loop all players:
+				clear {%arg-1%::wheat}
+				clear {%arg-1%::carrot}	
+				clear {%arg-1%::potato}
+				clear {%arg-1%::cactus} 
+				clear {%arg-1%::pumpkin} 
+				clear {%arg-1%::melon} 
+				clear {%arg-1%::level} 
+				clear {%arg-1%::xp} 
+				clear {%arg-1%::prestige}
+				clear {%arg-1%::cropsMined} 
+				clear {%arg-1%::bal} 
+				clear {%arg-1%::backpackStorage}
+		set {%arg-1's uuid%::wheat} to 0
+		set {%arg-1's uuid%::carrot} to 0
+		set {%arg-1's uuid%::potato} to 0
+		set {%arg-1's uuid%::cactus} to 0
+		set {%arg-1's uuid%::pumpkin} to 0
+		set {%arg-1's uuid%::melon} to 0
+		set {%arg-1's uuid%::level} to 0 
+		set {%arg-1's uuid%::xp} to 0
+		set {%arg-1's uuid%::prestige} to 0
+		set {%arg-1's uuid%::cropsMined} to 0
+		set {%arg-1's uuid%::bal} to 0
+		set {%arg-1's uuid%::backpackStorage} to 10
+		
+		execute command "xp set %player% 0 levels"
+		execute command "xp set %player% 0"
+		
+		send "%arg-1% wiped" 
+		
+		
+command /addamount [<text>] [<number>]:
+	permission: op
+	trigger:
+		if arg-2 is set:
+			if arg-1 is "money":
+				add arg-2 to {%player's uuid%::bal}
+			else if arg-1 is "level":
+				add arg-2 to {%player's uuid%::level}
+				execute command "xp set %player% %{%player's uuid%::level}% levels"
+			else if arg-1 is "xp":
+				add arg-2 to {%player's uuid%::xp}
+			else if arg-1 is "backpack":
+				add arg-2 to {%player's uuid%::backpackStorage}
+			else if arg-1 is "prestige":
+				add arg-2 to {%player's uuid%::prestige}
+			else:
+				send "Use either: money, level, xp, backpack, prestige"
+		else:
+			send "Specify amount"
+			send "Use either: money, level, xp, backpack, prestige"
+	
+
+
+
+command /sell:
+	trigger:
+		if {%player's uuid%::sellValue} > 0:
+			send "&7[&6&lCROPPING&7] &cBackpack successfully sold for &e$%formatNum({%player's uuid%::sellValue})%."
+			add {%player's uuid%::sellValue} to {%player's uuid%::bal}
+			set {%player's uuid%::wheat} to 0
+			set {%player's uuid%::carrot} to 0
+			set {%player's uuid%::potato} to 0
+			set {%player's uuid%::cactus} to 0
+			set {%player's uuid%::melon} to 0
+			set {%player's uuid%::pumpkin} to 0
+			play sound "entity.player.levelup" with volume 0.01 and pitch 0.1 to the player
+		else:
+			send "&7[&6&lCROPPING&7] &cYou have nothing to sell."
+			play sound "block.note_block.bass" with volume 0.01 and pitch 0.1 to the player

@@ -1,0 +1,349 @@
+#BACKPACK
+
+function formatNum(n: number) :: string:
+    set {_l::*} to split "k,M,B,T,Qn,Qi,Sx" at ","
+    set {_i} to min(floor(log({_n})/3), size of {_l::*})
+    return "%{_n}%" if {_i} <= 0
+    set {_i2} to 1000^{_i}
+    return "%{_n}/{_i2}%%{_l::%{_i}%}%"
+
+command /backpack:
+	trigger:
+		# OPEN BACKPACK
+		set metadata tag "backpack" of player to chest inventory with 3 rows named "&7&lBackpack - L%{%player%::level}% - P%{%player%::prestige}%"
+		wait 1 tick
+
+		# FORMATTING BACKGROUND
+		loop 9 times:
+			set slot loop-value of metadata tag "backpack" of player to gray stained glass pane
+		loop 10 times:
+			set slot (loop-value + 16) of metadata tag "backpack" of player to gray stained glass pane
+
+			set slot 0 of metadata tag "backpack" of player to barrier named "&8--| &4&lExit &8|-- "
+
+    # WHEAT
+		set slot 10 of metadata tag "backpack" of player to wheat named "&6&lWheat&8&l: " with lore "<##E6BB18>Balance&8&l: <##018080>%formatNum({%player%::wheat})% wheat" and "<##E6BB18>Worth&8&l: <##018080>$%formatNum({%player%::wheat} * (1 + (0.05 * {%player%::level})))% <##706755>&o+ %formatNum((0.05*{%player%::level})*100)%%% multi"
+
+		# CARROTS
+		if {%player%::level} >= 10:
+			set slot 11 of metadata tag "backpack" of player to carrot named "&6&lCarrots&8&l: " with lore "<##E6BB18>Balance&8&l: <##018080>%formatNum({%player%::carrot})% carrots" and "<##E6BB18>Worth&8&l: <##018080>$%formatNum({%player%::carrot} * (5 + (0.05 * {%player%::level})))% <##706755>&o+ %formatNum((0.05*{%player%::level})*100)%%% multi"
+		else:
+			set slot 11 of metadata tag "backpack" of player to wither rose named "&8--| &4&lLocked &8|-- " with lore "&cReach level 10 to unlock carrots."
+
+		# POTATO
+		if {%player%::level} >= 25:
+			set slot 12 of metadata tag "backpack" of player to potato named "&6&lPotato&8&l: " with lore "<##E6BB18>Balance&8&l: <##018080>%formatNum({%player%::potato})% potato" and "<##E6BB18>Worth&8&l: <##018080>$%formatNum({%player%::potato} * (25 + (0.05 * {%player%::level})))% <##706755>&o+ %formatNum((0.05*{%player%::level})*100)%%% multi"
+		else:
+			set slot 12 of metadata tag "backpack" of player to wither rose named "&8--| &4&lLocked &8|-- " with lore "&cReach level 25 to unlock potatos."
+
+		# CACTUS
+		if {%player%::level} >= 50:
+			set slot 14 of metadata tag "backpack" of player to cactus named "&6&lCacti&8&l: " with lore "<##E6BB18>Balance&8&l: <##018080>%formatNum({%player%::cactus})% cacti" and "<##E6BB18>Worth&8&l: <##018080>$%formatNum({%player%::cactus} * (25 + (0.05 * {%player%::level})))% <##706755>&o+ %formatNum((0.05*{%player%::level})*100)%%% multi"
+		else:
+			set slot 14 of metadata tag "backpack" of player to wither rose named "&8--| &4&lLocked &8|-- " with lore "&cReach level 50 to unlock cacti."
+
+		# PUMPKIN
+		if {%player%::level} >= 90:
+			set slot 15 of metadata tag "backpack" of player to pumpkin named "&6&lPumpkin&8&l: " with lore "<##E6BB18>Balance&8&l: <##018080>%formatNum({%player%::pumpkin})% pumpkins" and "<##E6BB18>Worth&8&l: <##018080>$%formatNum({%player%::pumpkin} * (25 + (0.05 * {%player%::level})))% <##706755>&o+ %formatNum((0.05*{%player%::level})*100)%%% multi"
+		else:
+			set slot 15 of metadata tag "backpack" of player to wither rose named "&8--| &4&lLocked &8|-- " with lore "&cReach level 90 to unlock pumpkin."
+
+		# MELON
+		if {%player%::level} >= 150:
+			set slot 16 of metadata tag "backpack" of player to melon named "&6&lMelon&8&l: " with lore "<##E6BB18>Balance&8&l: <##018080>%formatNum({%player%::melon})% melons" and "<##E6BB18>Worth&8&l: <##018080>$%formatNum({%player%::melon} * (25 + (0.05 * {%player%::level})))% <##706755>&o+ %formatNum((0.05*{%player%::level})*100)%%% multi"
+		else:
+			set slot 16 of metadata tag "backpack" of player to wither rose named "&8--| &4&lLocked &8|-- " with lore "&cReach level 150 to unlock melon."
+
+		# BACKPACK UPGRADE
+		set {%player%::collected} to {%player%::wheat} + {%player%::carrot} + {%player%::potato} + {%player%::cactus} + {%player%::pumpkin} + {%player%::melon}
+		set slot 13 of metadata tag "backpack" of player to trapped chest named "&6&lUpgrade&8&l: " with lore "<##E6BB18>Backpack storage&8&l: <##018080>%formatNum({%player%::collected})% / %formatNum({%player%::backpackStorage})%" and "&c&oClick to open upgrade menu."
+
+		open (metadata tag "backpack" of player) to player
+
+on rightclick:
+	if player's held item is chest named "&7&lBackpack":
+		cancel event
+		execute player command "backpack"
+
+on inventory click:
+	if player's gamemode is not creative:
+		if event-item is chest:
+			cancel event
+			execute player command "backpack"
+		if event-inventory = (metadata tag "backpack" of player):
+			if event-item is trapped chest:
+				cancel event
+				execute player command "bpupgrade"
+			if event-item is gray stained glass pane or wheat or wither rose or barrier or carrot or cactus or melon or pumpkin or potato:
+				cancel event
+			if index of event-slot is 0:
+				close inventory of player
+
+#BACKPACK UPGRADE
+
+command /backpackupgrade:
+	aliases: bu, backpackup, bpupgrade
+	trigger:
+		# OPEN BACKPACK
+		set metadata tag "bpUpgrade" of player to chest inventory with 3 rows named "&7&lBackpack Upgrade Menu"
+		wait 1 tick
+
+		# FORMATTING BACKGROUND#
+		loop 9 times:
+			set slot loop-value - 1 of metadata tag "bpUpgrade" of player to gray stained glass pane
+		loop 9 times:
+			set slot loop-value + 17 of metadata tag "bpUpgrade" of player to gray stained glass pane
+		set slot 10 and 16 of metadata tag "bpUpgrade" of player to gray stained glass pane
+
+   		# BACK
+		set slot 9 of metadata tag "bpUpgrade" of player to barrier named "&8--| &4&lBack &8|-- " with lore "&cGo back to backpack."
+
+		set slot 11 of metadata tag "bpUpgrade" of player to red glazed terracotta named "Upgrade Button +1" with lore "Left click to upgrade 1 level"
+
+		set slot 12 of metadata tag "bpUpgrade" of player to yellow glazed terracotta named "Upgrade Button +10" with lore "Left click to upgrade by 10 level"
+
+		set slot 13 of metadata tag "bpUpgrade" of player to green glazed terracotta named "Upgrade Button Max" with lore "Left click to upgrade maximum levels"
+
+		set slot 14 of metadata tag "bpUpgrade" of player to light blue glazed terracotta named "Upgrade Button Max" with lore "Left click to upgrade maximum levels"
+
+		set slot 15 of metadata tag "bpUpgrade" of player to purple glazed terracotta named "Upgrade Button Max" with lore "Left click to upgrade maximum levels"
+
+		set slot 17 of metadata tag "bpUpgrade" of player to dark oak sign named "Storage: " with lore "%{%player%::backpackStorage}%"
+
+		open (metadata tag "bpUpgrade" of player) to player
+
+on inventory click:
+	if event-inventory = (metadata tag "bpUpgrade" of player):
+		if event-item is gray stained glass pane:
+			cancel event
+		if index of event-slot is 9:
+			cancel event
+			execute player command "backpack"
+
+
+
+#COMMAND
+
+command /rankup [<number>]:
+	aliases: rk, levelup, lu
+	trigger:
+		if arg-1 is not set:
+			if {%player%::xp} >= ({%player%::level} * 500) + 500:
+				if {%player%::bal} >= ({%player%::level} * 500) + 500:
+					add 1 to {%player%::level}
+					set {%player%::multi} to {%player%::level} * 0.05
+					set {%player%::xp} to {%player%::xp} - 500*{%player%::level}
+					execute command "xp give %player% 1l"
+				else:
+					send "&7[&6&lCROPPING&7] &cYou don't have the required money, you need $%(({%player%::level} * 500) + 500) - {%player%::bal}% more"
+			else:
+				send "&7[&6&lCROPPING&7] &cYou don't have the required xp, you need %(({%player%::level} * 500) + 500) - {%player%::xp}% more"
+		else:
+			if ({%player%::xp} * arg-1) >= (({%player%::level} * 500) + 500) * arg-1:
+				if ({%player%::bal}*arg-1) >= (({%player%::level} * 500) + 500) * arg-1:
+					add arg-1 to {%player%::level}
+					set {%player%::multi} to {%player%::level} * 0.05
+					set {%player%::xp} to {%player%::xp} - (500*{%player%::level})* arg-1
+					execute command "xp give %player% %arg-1%l"
+				else:
+					send "&7[&6&lCROPPING&7] &cYou don't have the required money, you need $%((({%player%::level} * 500) + 500)* arg-1) - {%player%::bal}% more"
+			else:
+				send "&7[&6&lCROPPING&7] &cYou don't have the required xp, you need %((({%player%::level} * 500) + 500)* arg-1) - {%player%::xp}% more"
+
+command /giveBP:
+	permission: op
+	permission message: h- how'd you find this?
+	trigger:
+		set slot 8 of player to 1 chest named "&7&lBackpack"
+
+command /giveTool:
+	permission: op
+	permission message: broooo.. stopppp
+	trigger:
+		set slot 0 of player to 1 stone button named "&7Pebble"
+
+command /giveInv:
+	permission: op
+	permission message: broooo.. stopppp
+	trigger:
+		set slot 0 of player to 1 stone button named "&7Pebble"
+		set slot 8 of player to 1 chest named "&7&lBackpack"
+
+
+command /growAll:
+	permission: op
+	permission message: You can't do this sillyyyyyy
+	trigger:
+		loop all blocks in radius 100 around player:
+			loop-block is farmland
+			set loop-block to moist farmland
+		loop all blocks in radius 100 around player:
+			loop-block is freshly planted wheat plant
+			set loop-block to stage 8 wheat plant
+
+
+command /pWipe [<player>]:
+	permission: op
+	permission message: You can't do this sillyyyyyy
+	trigger:
+		send "%{arg 1}% was wiped"
+		set {%arg 1%::wheat} to 0
+
+command /firstjoin:
+	permission: op
+	trigger:
+		set {%player%::wheat} to 0
+		set {%player%::carrot} to 0
+		set {%player%::potato} to 0
+		set {%player%::cactus} to 0
+		set {%player%::pumpkin} to 0
+		set {%player%::melon} to 0
+		set {%player%::level} to 0
+		set {%player%::xp} to 0
+		set {%player%::prestige} to 0
+		set {%player%::cropsMined} to 0
+		set {%player%::bal} to 0
+		set {%player%::backpackStorage} to 10
+		execute command "xp reset %player%"
+
+command /stats:
+	permission: op
+	trigger:
+		send "wheat %{%player%::wheat}%"
+		send "carrots %{%player%::carrot}%"
+		send "potato %{%player%::potato}%"
+		send "cactus %{%player%::cactus}%"
+		send "pumpkin %{%player%::pumpkin}%"
+		send "melon %{%player%::melon}%"
+		send "level %{%player%::level}%"
+		send "xp %{%player%::xp}%"
+		send "prestige %{%player%::prestige}%"
+		send "cropsMined %{%player%::cropsMined}%"
+		send "backpackStorage %{%player%::backpackStorage}%"
+
+command /maxlvl [<text>]:
+	permission: op
+	trigger:
+		if arg-1 is "money":
+			set {%player%::bal} to 10000
+		if arg-1 is "level":
+			set {%player%::level} to 150
+		if arg-1 is "bp":
+			set {%player%::backpackStorage} to 100000
+
+command /spawn:
+	trigger:
+		make console execute command "warps spawn %player%"
+
+command /warp [<text>]:
+	trigger:
+		if arg-1 is "spawn":
+			make console execute command "warps spawn %player%"
+
+# Mining
+
+on break:
+	if player's gamemode is not creative:
+
+			# If not fully grown crop
+		if event-block is freshly planted wheat plant or stage 2 wheat plant or stage 3 wheat plant or stage 4 wheat plant or stage 5 wheat plant or stage 6 wheat plant or stage 7 wheat plant or freshly planted carrot plant or stage 2 carrot plant or stage 3 carrot plant or stage 4 carrot plant or stage 5 carrot plant or stage 6 carrot plant or stage 7 carrot plant:
+			cancel drops
+			cancel event
+
+		# Wheat
+		if event-block is fully grown wheat plant:
+			if (({%player%::wheat} + {%player%::carrot} + {%player%::potato} + {%player%::cactus} + {%player%::pumpkin} + {%player%::melon}) + 1) <= {%player%::backpackStorage}:
+				cancel drops
+
+				# Ding sound effect
+				play sound "entity.experience_orb.pickup" at volume 0.1 at pitch 10 at player
+				execute console command "playsound minecraft:entity.experience_orb.pickup master %{player}% ~ ~ ~ 10 0"
+				# Sending xp message to above hotbar
+				send action bar "&3&l+ %round(1 + (0.05*{%player%::multi}))%  &b%{%player%::xp}% / %{%player%::level} * 500 + 500% %round({%player%::xp} / (({%player%::level} * 500) + 500) *100)%%%" to player
+
+				# Growing wheat
+				add 1 to {%player%::xp}
+				add 1 to {%player%::wheat}
+				set event-block to air
+				wait 0.5 seconds
+				set event-block to freshly planted wheat plant
+				wait 0.5 seconds
+				set event-block to stage 2 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 3 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 4 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 5 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 6 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 7 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 8 wheat plant
+			else:
+				send "&7[&6&lCROPPING&7] &cYour backpack is full."
+
+
+      	# Carrots
+		if event-block is fully grown carrot plant:
+			if (({%player%::wheat} + {%player%::carrot} + {%player%::potato} + {%player%::cactus} + {%player%::pumpkin} + {%player%::melon}) + 1) <= {%player%::backpackStorage}:
+				cancel drops
+				if {%player%::level} < 10:
+					cancel event
+					Send "&7[&6&lCROPPING&7] &cYou must be at least level 10 to farm carrots."
+				else:
+
+    				# Ding sound effect
+					play sound "entity.experience_orb.pickup" at volume 0.1 at pitch 10 at player
+					execute console command "playsound minecraft:entity.experience_orb.pickup master %{player}% ~ ~ ~ 10 0"
+
+    				# Sending xp message to above hotbar
+					send action bar "&3&l+ %round(5 + (0.05*{%player%::multi}))%  &b%{%player%::xp}% / %{%player%::level} * 500 + 500% %round({%player%::xp} / (({%player%::level} * 500) + 500) *100)%%%" to player
+
+	  	  			# Growing carrot
+					add 5 to {%player%::xp}
+					add 1 to {%player%::carrot}
+					set event-block to air
+					wait 0.5 seconds
+					set event-block to freshly planted carrot plant
+					wait 0.5 seconds
+					set event-block to stage 2 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 3 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 4 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 5 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 6 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 7 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 8 carrot plant
+			else:
+				send "&7[&6&lCROPPING&7] &cYour backpack is full."
+
+# Upgrade
+
+#   &7[&6&lCROPPING&7]
+
+options:
+	1 : "&7Pebble"
+	2 : "&8Stick"
+
+command /upgrade:
+	trigger:
+		if player is holding an air:
+			send "&7[&6&lCROPPING&7] &cYou need to actually hold something silly."
+			execute console command "playsound minecraft:block.note_block.bass master %{player}% ~ ~ ~ 10 0"
+		if player is holding an chest:
+			send "&7[&6&lCROPPING&7] &cUpgrade your backpack... not like this."
+			execute console command "playsound minecraft:block.note_block.bass master %{player}% ~ ~ ~ 10 0"
+		if player's tool is stone button:
+			if {%player%::money} >= 600:
+				add -600 to {%player%::money}
+				set slot 0 of player to 1 stick named {@2}
+			else:
+				send "&7[&6&lCROPPING&7] &cYou do not have $600."
+				execute console command "playsound minecraft:block.note_block.bass master %{player}% ~ ~ ~ 10 0"

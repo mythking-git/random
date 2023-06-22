@@ -1,0 +1,57 @@
+function backpackUpgrade(a: number, p: player):
+	if {%{_p}'s uuid%::bal} >= {_a} * ({%{_p}'s uuid%::backpackStorage}/20) * (1 + ({%{_p}'s uuid%::backpackStorage}/100)):
+		close inventory of {_p}
+		send "&7[&6&lCROPPING&7] &e%{_a}% &cstorage has been added to your backpack for $%formatNum({_a} * ({%{_p}'s uuid%::backpackStorage}/20) * (1 + ({%{_p}'s uuid%::backpackStorage}/100)))%." to {_p}
+		remove {_a} * ({%{_p}'s uuid%::backpackStorage}/20) * (1 + ({%{_p}'s uuid%::backpackStorage}/100)) from {%{_p}'s uuid%::bal}
+		add {_a} to {%{_p}'s uuid%::backpackStorage}
+		play sound "entity.experience_orb.pickup" at volume 0.01 at pitch 10 to {_p}
+		execute {_p} command "/backpackupgrade"
+
+		
+
+command /backpackupgrade:
+	aliases: bu, backpackup, bpupgrade
+	trigger:
+		
+		set {%player's uuid%::collected} to {%player's uuid%::wheat} + {%player's uuid%::carrot} + {%player's uuid%::potato} + {%player's uuid%::cactus} + {%player's uuid%::pumpkin} + {%player's uuid%::melon}
+		
+		# OPEN BACKPACK
+		set metadata tag "bpUpgrade" of player to chest inventory with 3 rows named "&7&lBackpack Upgrade Menu"
+		wait 1 tick
+
+		# FORMATTING BACKGROUND#
+		loop 27 times:
+			set slot loop-value - 1 of metadata tag "bpUpgrade" of player to gray stained glass pane named " "
+
+   		# BACK
+		set slot 9 of metadata tag "bpUpgrade" of player to barrier named "&8--| &4&lBack &8|-- " with lore "&cGo back to backpack."
+
+		set slot 11 of metadata tag "bpUpgrade" of player to red glazed terracotta named "&6&l+1 storage" with lore "<##E6BB18>Cost&8&l: <##018080>$%formatNum(1 * ({%player's uuid%::backpackStorage}/20) * (1 + ({%player's uuid%::backpackStorage}/100)))%"
+
+		set slot 12 of metadata tag "bpUpgrade" of player to yellow glazed terracotta named "&6&l+10 storage" with lore "<##E6BB18>Cost&8&l: <##018080>$%formatNum(10 * ({%player's uuid%::backpackStorage}/20) * (1 + ({%player's uuid%::backpackStorage}/100)))%"
+
+		set slot 13 of metadata tag "bpUpgrade" of player to green glazed terracotta named "&6&l+100 storage" with lore "<##E6BB18>Cost&8&l: <##018080>$%formatNum(100 * ({%player's uuid%::backpackStorage}/20) * (1 + ({%player's uuid%::backpackStorage}/100)))%"
+
+		set slot 14 of metadata tag "bpUpgrade" of player to light blue glazed terracotta named "&6&l+1000 storage" with lore "<##E6BB18>Cost&8&l: <##018080>$%formatNum(1000 * ({%player's uuid%::backpackStorage}/20) * (1 + ({%player's uuid%::backpackStorage}/100)))%"
+
+		set slot 15 of metadata tag "bpUpgrade" of player to purple glazed terracotta named "&6&l+10000 storage" with lore "<##E6BB18>Cost&8&l: <##018080>$%formatNum(10000 * ({%player's uuid%::backpackStorage}/20) * (1 + ({%player's uuid%::backpackStorage}/100)))%"
+
+		set slot 17 of metadata tag "bpUpgrade" of player to dark oak sign named "&6&lStorage&8&l:" with lore "<##E6BB18>Backpack storage&8&l: <##018080>%formatNum({%player's uuid%::collected})% / %formatNum({%player's uuid%::backpackStorage})%"
+
+		open (metadata tag "bpUpgrade" of player) to player
+
+on inventory click:
+	if event-inventory = (metadata tag "bpUpgrade" of player):
+		cancel event
+		if index of event-slot is 9:
+			execute player command "backpack"
+		if index of event-slot is 11:
+			backpackUpgrade(1,player)
+		if index of event-slot is 12:
+			backpackUpgrade(10,player)
+		if index of event-slot is 13:
+			backpackUpgrade(100,player)
+		if index of event-slot is 14:
+			backpackUpgrade(1000,player)
+		if index of event-slot is 15:
+			backpackUpgrade(10000,player)

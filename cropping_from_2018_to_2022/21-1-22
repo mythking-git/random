@@ -1,0 +1,133 @@
+command /backpack:
+	trigger:
+		open chest with 3 row named "&7&lBackpack" to player
+		wait 1 tick
+		loop 10 times:
+			format slot loop-value - 1 of player with gray stained glass pane named " " to be unstealable
+		loop 10 times:
+			format slot loop-value + 17 - 1 of player with gray stained glass pane named " " to be unstealable
+		format slot 10 of player with wheat named "&e&lWheat&7: " with lore "&c&lBalance: %{%player%::wheat}%" and "&c&l$1 + %(((0.05 * {%player%::multi})-0.05)*100)%%% multi" and "&c&lWorth: %(1 + ((0.05 * {%player%::multi}) -0.05)*{%player%::wheat})%" to be unstealable
+
+on rightclick:
+	if player's held item is chest named "&7&lBackpack":
+		cancel event
+		execute player command "backpack"
+
+on inventory click:
+	if player's gamemode is not creative:
+		cancel event
+
+on break:
+	if player's gamemode is not creative:
+		if event-block is fully grown wheat plant:
+			cancel drops
+
+			play sound "entity.experience_orb.pickup" at volume 0.1 at pitch 10 at player
+
+			send action bar "&3&l+ %round(1 + (0.05*{%player%::multi}))%  &b%{%player%::xp}% / %{%player%::level} * 500 + 500% %round({%player%::xp} / (({%player%::level} * 500) + 500) *100)%%%" to player
+
+			if {%player%::xp} >= ({%player%::level} * 500) + 500:
+				add 1 to {%player%::level}
+				set {%player%::multi} to {%player%::level}/10
+				set {%player%::xp} to 0
+				execute command "xp give %player% 1l"
+				send "you leveled up"
+
+			add (1 + (0.05*{%player%.multi})) to {%player%::xp}
+			add 1 to {%player%::wheat}
+			set event-block to air
+			wait 0.5 seconds
+			set event-block to freshly planted wheat plant
+			wait 0.5 seconds
+			set event-block to stage 2 wheat plant
+			wait 0.5 seconds
+			set event-block to stage 3 wheat plant
+			wait 0.5 seconds
+			set event-block to stage 4 wheat plant
+			wait 0.5 seconds
+			set event-block to stage 5 wheat plant
+			wait 0.5 seconds
+			set event-block to stage 6 wheat plant
+			wait 0.5 seconds
+			set event-block to stage 7 wheat plant
+			wait 0.5 seconds
+			set event-block to stage 8 wheat plant
+		if event-block is freshly planted wheat plant or stage 2 wheat plant or stage 3 wheat plant or stage 4 wheat plant or stage 5 wheat plant or stage 6 wheat plant or stage 7 wheat plant:
+			cancel event
+
+command /giveBP:
+	permission: op
+	permission message: h- how'd you find this?
+	trigger:
+		set slot 8 of player to 1 chest named "&7&lBackpack"
+
+command /giveTool:
+	permission: op
+	permission message: broooo.. stopppp
+	trigger:
+		set slot 0 of player to 1 stone button named "&7Pebble"
+
+command /giveInv:
+	permission: op
+	permission message: broooo.. stopppp
+	trigger:
+		set slot 0 of player to 1 stone button named "&7Pebble"
+		set slot 8 of player to 1 chest named "&7&lBackpack"
+
+command /growAll:
+	permission: op
+	permission message: You can't do this sillyyyyyy
+	trigger:
+		loop all blocks in radius 100 around player:
+			loop-block is farmland
+			set loop-block to moist farmland
+		loop all blocks in radius 100 around player:
+			loop-block is freshly planted wheat plant
+			set loop-block to stage 8 wheat plant
+			
+command /pWipe [<player>]:
+	permission: op
+	permission message: You can't do this sillyyyyyy
+	trigger:
+		send "%{arg 1}% was wiped"
+		set {%arg 1%::wheat} to 0
+
+command /firstjoin:
+	permission: op
+	trigger:
+		set {%player%::wheat} to 0
+		set {%player%::level} to 0
+		set {%player%::xp} to 0
+		execute command "xp reset %player%"
+
+command /spawn:
+	trigger:
+		make console execute command "warps spawn %player%"
+
+command /warp [<text>]:
+	trigger:
+		if arg-1 is "spawn":
+			make console execute command "warps spawn %player%"
+
+
+#   &7[&6&lCROPPING&7]
+
+options:
+	1 : "&7Pebble"
+	2 : "&8Stick"
+
+command /upgrade:
+	trigger:
+		if player is holding an air:
+			send "&7[&6&lCROPPING&7] &cYou need to actually hold something silly."
+			execute console command "playsound minecraft:block.note_block.bass master mythking ~ ~ ~ 10 0"
+		if player is holding an chest:
+			send "&7[&6&lCROPPING&7] &cUpgrade your backpack... not like this."
+			execute console command "playsound minecraft:block.note_block.bass master mythking ~ ~ ~ 10 0"
+		if player's tool is stone button:
+			if {%player%::money} >= 600:
+				add -600 to {%player%::money}
+				set slot 0 of player to 1 stick named {@2}
+			else:
+				send "&7[&6&lCROPPING&7] &cYou do not have $600."
+				execute console command "playsound minecraft:block.note_block.bass master mythking ~ ~ ~ 10 0"

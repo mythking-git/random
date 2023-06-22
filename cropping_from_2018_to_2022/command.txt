@@ -1,0 +1,130 @@
+command /rankup [<number>]:
+	aliases: rk, levelup, lu
+	trigger:
+		if arg-1 is not set:
+			if {%player's uuid%::xp} >= ({%player's uuid's uuid%::level} * 500) + 500:
+				if {%player's uuid's uuid%::bal} >= ({%player's uuid's uuid%::level} * 500) + 500:
+					add 1 to {%player's uuid's uuid%::level}
+					set {%player's uuid's uuid%::multi} to {%player's uuid's uuid%::level} * 0.05
+					set {%player's uuid's uuid%::xp} to {%player's uuid's uuid%::xp} - 500*{%player's uuid's uuid%::level}
+					execute command "xp give %player's uuid's uuid% 1l"
+				else:
+					send "&7[&6&lCROPPING&7] &cYou don't have the required money, you need $%(({%player's uuid%::level} * 500) + 500) - {%player's uuid%::bal}% more"
+			else:
+				send "&7[&6&lCROPPING&7] &cYou don't have the required xp, you need %(({%player's uuid%::level} * 500) + 500) - {%player's uuid%::xp}% more"
+		else:
+			if ({%player's uuid%::xp} * arg-1) >= (({%player's uuid%::level} * 500) + 500) * arg-1:
+				if ({%player's uuid%::bal}*arg-1) >= (({%player's uuid%::level} * 500) + 500) * arg-1:
+					add arg-1 to {%player's uuid%::level}
+					set {%player's uuid%::multi} to {%player's uuid%::level} * 0.05
+					set {%player's uuid%::xp} to {%player's uuid%::xp} - (500*{%player's uuid%::level})* arg-1
+					execute command "xp give %player's uuid% %arg-1%l"
+				else:
+					send "&7[&6&lCROPPING&7] &cYou don't have the required money, you need $%((({%player's uuid%::level} * 500) + 500)* arg-1) - {%player's uuid%::bal}% more"
+			else:
+				send "&7[&6&lCROPPING&7] &cYou don't have the required xp, you need %((({%player's uuid%::level} * 500) + 500)* arg-1) - {%player's uuid%::xp}% more"
+
+command /giveBP:
+	permission: op
+	permission message: h- how'd you find this?
+	trigger:
+		set slot 8 of player's uuid to 1 chest named "&7&lBackpack"
+
+command /giveTool:
+	permission: op
+	permission message: broooo.. stopppp
+	trigger:
+		set slot 0 of player's uuid to 1 stone button named "&7Pebble"
+
+command /giveInv:
+	permission: op
+	permission message: broooo.. stopppp
+	trigger:
+		set slot 0 of player's uuid to 1 stone button named "&7Pebble"
+		set slot 8 of player's uuid to 1 chest named "&7&lBackpack"
+
+
+command /growAll:
+	permission: op
+	permission message: You can't do this sillyyyyyy
+	trigger:
+		loop all blocks in radius 100 around player's uuid:
+			loop-block is farmland
+			set loop-block to moist farmland
+		loop all blocks in radius 100 around player's uuid:
+			loop-block is freshly planted wheat plant
+			set loop-block to stage 8 wheat plant
+
+
+command /pWipe [<player's uuid>]:
+	permission: op
+	permission message: You can't do this sillyyyyyy
+	trigger:
+		send "%{arg 1}% was wiped"
+		set {%arg 1%::wheat} to 0
+
+command /firstjoin:
+	permission: op
+	trigger:
+		set {%player's uuid%::wheat} to 0
+		set {%player's uuid%::carrot} to 0
+		set {%player's uuid%::potato} to 0
+		set {%player's uuid%::cactus} to 0
+		set {%player's uuid%::pumpkin} to 0
+		set {%player's uuid%::melon} to 0
+		set {%player's uuid%::level} to 0
+		set {%player's uuid%::xp} to 0
+		set {%player's uuid%::prestige} to 0
+		set {%player's uuid%::cropsMined} to 0
+		set {%player's uuid%::bal} to 0
+		set {%player's uuid%::backpackStorage} to 10
+		execute command "xp reset %player's uuid%"
+
+command /stats:
+	permission: op
+	trigger:
+		send ""
+		send "&8-/***\- &6&l %player's uuid%'s Stats &8-/***\-"
+		send "<##E6BB18>Collected Items&8&l: <##018080>%formatNum({%player's uuid%::wheat} + {%player's uuid%::carrot} + {%player's uuid%::potato} + {%player's uuid%::cactus} + {%player's uuid%::pumpkin} + {%player's uuid%::melon})% / %formatNum({%player's uuid%::backpackStorage})%"
+		send "<##E6BB18>Prestige&8&l: <##018080>%formatNum({%player's uuid%::prestige})%"
+		send "<##E6BB18>Level&8&l: <##018080>%formatNum({%player's uuid%::level})%"
+		send "<##E6BB18>XP&8&l: <##018080>%formatNum({%player's uuid%::xp})%"
+		send "<##E6BB18>Balance&8&l: <##018080>$%formatNum({%player's uuid%::bal})%"
+		send "<##E6BB18>Crops Mined&8&l: <##018080>%formatNum({%player's uuid%::cropsMined})%"
+		send "&8-\___/-\___/-\___/-"
+		send ""
+
+command /addamount [<text>] [<number>]:
+	permission: op
+	trigger:
+		if arg-1 is not set:
+			send "Use either: money, level, xp, backpack"
+		else if arg-1 is "money":
+			if arg-2 is not set:
+				send "Specify amount"
+			else:
+				add arg-2 to {%player's uuid%::bal}
+		else if arg-1 is "level":
+			if arg-2 is not set:
+				send "Specify amount"
+			else:
+				add arg-2 to {%player's uuid%::level}
+		else if arg-1 is "xp":
+			if arg-2 is not set:
+				send "Specify amount"
+			else:
+				add arg-2 to {%player's uuid%::xp}
+		else if arg-1 is "backpack":
+			if arg-2 is not set:
+				send "Specify amount"
+			else:
+				add arg-2 to {%player's uuid%::backpackStorage}
+
+command /spawn:
+	trigger:
+		make console execute command "warps spawn %player's uuid%"
+
+command /warp [<text>]:
+	trigger:
+		if arg-1 is "spawn":
+			make console execute command "warps spawn %player's uuid%"

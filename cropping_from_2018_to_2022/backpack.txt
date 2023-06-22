@@ -1,0 +1,121 @@
+function formatNum(n: number) :: string:
+    set {_l::*} to split "k,M,B,T,Qn,Qi,Sx" at ","
+    set {_i} to min(floor(log({_n})/3), size of {_l::*})
+    return "%{_n}%" if {_i} <= 0
+    set {_i2} to 1000^{_i}
+    return "%{_n}/{_i2}%%{_l::%{_i}%}%"
+
+command /backpackupgrade:
+	aliases: bu, backpackup, bpupgrade
+	trigger:
+		# OPEN BACKPACK
+		set metadata tag "bpUpgrade" of player to chest inventory with 3 rows named "&7&lBackpack Upgrade Menu"
+		wait 1 tick
+
+		# FORMATTING BACKGROUND#
+		loop 9 times:
+			set slot loop-value - 1 of metadata tag "bpUpgrade" of player to gray stained glass pane
+		loop 9 times:
+			set slot loop-value + 17 of metadata tag "bpUpgrade" of player to gray stained glass pane
+		set slot 10 and 16 of metadata tag "bpUpgrade" of player to gray stained glass pane
+
+   		# BACK
+		set slot 9 of metadata tag "bpUpgrade" of player to barrier named "&8--| &4&lBack &8|-- " with lore "&cGo back to backpack."
+
+		set slot 11 of metadata tag "bpUpgrade" of player to red glazed terracotta named "Upgrade Button +1" with lore "Left click to upgrade 1 level"
+
+		set slot 12 of metadata tag "bpUpgrade" of player to yellow glazed terracotta named "Upgrade Button +10" with lore "Left click to upgrade by 10 level"
+
+		set slot 13 of metadata tag "bpUpgrade" of player to green glazed terracotta named "Upgrade Button Max" with lore "Left click to upgrade maximum levels"
+
+		set slot 14 of metadata tag "bpUpgrade" of player to light blue glazed terracotta named "Upgrade Button Max" with lore "Left click to upgrade maximum levels"
+
+		set slot 15 of metadata tag "bpUpgrade" of player to purple glazed terracotta named "Upgrade Button Max" with lore "Left click to upgrade maximum levels"
+
+		set slot 17 of metadata tag "bpUpgrade" of player to dark oak sign named "Storage: " with lore "%formatNum({%player's uuid%::backpackStorage})%"
+
+		open (metadata tag "bpUpgrade" of player) to player
+
+on inventory click:
+	if event-inventory = (metadata tag "bpUpgrade" of player):
+		if event-item is gray stained glass pane:
+			cancel event
+		if index of event-slot is 9:
+			cancel event
+			execute player command "backpack"
+
+
+
+
+
+command /backpack:
+	trigger:
+		# OPEN BACKPACK
+		set metadata tag "backpack" of player to chest inventory with 3 rows named "&7&lBackpack - P%formatNum({%player's uuid%::prestige})% - L%formatNum({%player's uuid%::level})%"
+		wait 1 tick
+
+		# FORMATTING BACKGROUND
+		loop 9 times:
+			set slot loop-value of metadata tag "backpack" of player to gray stained glass pane
+		loop 10 times:
+			set slot (loop-value + 16) of metadata tag "backpack" of player to gray stained glass pane
+
+			set slot 0 of metadata tag "backpack" of player to barrier named "&8--| &4&lExit &8|-- "
+
+    # WHEAT
+		set slot 10 of metadata tag "backpack" of player to wheat named "&6&lWheat&8&l: " with lore "<##E6BB18>Balance&8&l: <##018080>%formatNum({%player's uuid%::wheat})% wheat" and "<##E6BB18>Worth&8&l: <##018080>$%formatNum({%player's uuid%::wheat} * (1 + (0.05 * {%player's uuid%::level})))% <##706755>&o+ %formatNum((0.05*{%player's uuid%::level})*100)%%% multi"
+
+		# CARROTS
+		if {%player's uuid%::level} >= 10:
+			set slot 11 of metadata tag "backpack" of player to carrot named "&6&lCarrots&8&l: " with lore "<##E6BB18>Balance&8&l: <##018080>%formatNum({%player's uuid%::carrot})% carrots" and "<##E6BB18>Worth&8&l: <##018080>$%formatNum({%player's uuid%::carrot} * (5 + (0.05 * {%player's uuid%::level})))% <##706755>&o+ %formatNum((0.05*{%player's uuid%::level})*100)%%% multi"
+		else:
+			set slot 11 of metadata tag "backpack" of player to wither rose named "&8--| &4&lLocked &8|-- " with lore "&cReach level 10 to unlock carrots."
+
+		# POTATO
+		if {%player's uuid%::level} >= 25:
+			set slot 12 of metadata tag "backpack" of player to potato named "&6&lPotato&8&l: " with lore "<##E6BB18>Balance&8&l: <##018080>%formatNum({%player's uuid%::potato})% potato" and "<##E6BB18>Worth&8&l: <##018080>$%formatNum({%player's uuid%::potato} * (25 + (0.05 * {%player's uuid%::level})))% <##706755>&o+ %formatNum((0.05*{%player's uuid%::level})*100)%%% multi"
+		else:
+			set slot 12 of metadata tag "backpack" of player to wither rose named "&8--| &4&lLocked &8|-- " with lore "&cReach level 25 to unlock potatos."
+
+		# CACTUS
+		if {%player's uuid%::level} >= 50:
+			set slot 14 of metadata tag "backpack" of player to cactus named "&6&lCacti&8&l: " with lore "<##E6BB18>Balance&8&l: <##018080>%formatNum({%player's uuid%::cactus})% cacti" and "<##E6BB18>Worth&8&l: <##018080>$%formatNum({%player's uuid%::cactus} * (25 + (0.05 * {%player's uuid%::level})))% <##706755>&o+ %formatNum((0.05*{%player's uuid%::level})*100)%%% multi"
+		else:
+			set slot 14 of metadata tag "backpack" of player to wither rose named "&8--| &4&lLocked &8|-- " with lore "&cReach level 50 to unlock cacti."
+
+		# PUMPKIN
+		if {%player's uuid%::level} >= 90:
+			set slot 15 of metadata tag "backpack" of player to pumpkin named "&6&lPumpkin&8&l: " with lore "<##E6BB18>Balance&8&l: <##018080>%formatNum({%player's uuid%::pumpkin})% pumpkins" and "<##E6BB18>Worth&8&l: <##018080>$%formatNum({%player's uuid%::pumpkin} * (25 + (0.05 * {%player's uuid%::level})))% <##706755>&o+ %formatNum((0.05*{%player's uuid%::level})*100)%%% multi"
+		else:
+			set slot 15 of metadata tag "backpack" of player to wither rose named "&8--| &4&lLocked &8|-- " with lore "&cReach level 90 to unlock pumpkin."
+
+		# MELON
+		if {%player's uuid%::level} >= 150:
+			set slot 16 of metadata tag "backpack" of player to melon named "&6&lMelon&8&l: " with lore "<##E6BB18>Balance&8&l: <##018080>%formatNum({%player's uuid%::melon})% melons" and "<##E6BB18>Worth&8&l: <##018080>$%formatNum({%player's uuid%::melon} * (25 + (0.05 * {%player's uuid%::level})))% <##706755>&o+ %formatNum((0.05*{%player's uuid%::level})*100)%%% multi"
+		else:
+			set slot 16 of metadata tag "backpack" of player to wither rose named "&8--| &4&lLocked &8|-- " with lore "&cReach level 150 to unlock melon."
+
+		# BACKPACK UPGRADE
+		set {%player's uuid%::collected} to {%player's uuid%::wheat} + {%player's uuid%::carrot} + {%player's uuid%::potato} + {%player's uuid%::cactus} + {%player's uuid%::pumpkin} + {%player's uuid%::melon}
+    set slot 13 of metadata tag "backpack" of player to trapped chest named "&6&lUpgrade&8&l: " with lore "<##E6BB18>Backpack storage&8&l: <##018080>%formatNum({%player's uuid%::collected})% / %formatNum({%player's uuid%::backpackStorage})%" and "<##E6BB18>Sell Value&8&l: <##018080>%formatNum({_v})% <##706755>&o+ %formatNum((0.05*{%player's uuid%::level})*100)%%% multi" and "%formatNum({_v}*((0.05*{%player's uuid%::level}))%"and "&c&oClick to open upgrade menu."
+
+		open (metadata tag "backpack" of player) to player
+
+on rightclick:
+	if player's held item is chest named "&7&lBackpack":
+		cancel event
+		execute player command "backpack"
+
+on inventory click:
+	if player's gamemode is not creative:
+		if event-item is chest:
+			cancel event
+			execute player command "backpack"
+		if event-inventory = (metadata tag "backpack" of player):
+			if event-item is trapped chest:
+				cancel event
+				execute player command "bpupgrade"
+			if event-item is gray stained glass pane or wheat or wither rose or barrier or carrot or cactus or melon or pumpkin or potato:
+				cancel event
+			if index of event-slot is 0:
+				close inventory of player

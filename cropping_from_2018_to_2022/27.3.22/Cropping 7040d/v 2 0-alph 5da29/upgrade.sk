@@ -1,0 +1,25 @@
+#   &7[&6&lCROPPING&7]
+
+options:
+	L1 : "&7Pebble"
+	L2 : "&8Stick"
+	L3 : "3"
+	L4 : "4"
+	L5 : "5"
+	
+
+command /upgrade:
+	trigger:
+		if player is holding an air:
+			send "&7[&6&lCROPPING&7] &cYou need to actually hold something silly."
+			play sound "block.note_block.bass" with volume 0.01 and pitch 0.1 to the player
+		if player is holding an chest:
+			send "&7[&6&lCROPPING&7] &cUpgrade your backpack... not like this."
+			play sound "block.note_block.bass" with volume 0.01 and pitch 0.1 to the player
+		if player's tool is stone button:
+			if {%player's uuid%::bal} >= 600:
+				add -600 to {%player's uuid%::bal}
+				set slot 0 of player to 1 stick named {@L2}
+			else:
+				send "&7[&6&lCROPPING&7] &cYou do not have $600."
+				play sound "block.note_block.bass" with volume 0.01 and pitch 0.1 to the player

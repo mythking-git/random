@@ -1,0 +1,27 @@
+command /tool:
+	permission: op
+	trigger:
+		set {%player%::level} to 0
+		set {_f} to {%player%::level}/10
+		set {%player%::multi} to {_f}
+		set {%player%::xp} to 0
+		set {%player%::total} to 0
+		set {%player%::fortune} to 0
+		set slot 4 of player to oak button named "&7&lWood Chips &8- &c1" with lore "&5Tool Fortune: &d%{%player%::fortune}*100%%%" and "&5Rank Fortune: &d%{%player%::multi}%%%"
+		send "%{%player%::level}%"
+
+command /toolup:
+	permission: op
+	trigger:
+		add 20 to {%player%::fortune}
+		send "%{%player%::fortune}%"
+		if {%player%::fortune} is 20:
+			set slot 4 of player to oak button named "&7&lWood Chips &8- &c2" with lore "&5Tool Fortune: &d%{%player%::fortune}%%%" and "&5Rank Fortune: &d%{%player%::multi}%%%"
+		if {%player%::fortune} is 40:
+			set slot 4 of player to oak button named "&7&lWood Chips &8- &c3" with lore "&5Tool Fortune: &d%{%player%::fortune}%%%" and "&5Rank Fortune: &d%{%player%::multi}%%%"
+		if {%player%::fortune} is 60:
+			set slot 4 of player to oak button named "&7&lWood Chips &8- &c4" with lore "&5Tool Fortune: &d%{%player%::fortune}%%%" and "&5Rank Fortune: &d%{%player%::multi}%%%"
+		if {%player%::fortune} is 80:
+			set slot 4 of player to oak button named "&7&lWood Chips &8- &c5" with lore "&5Tool Fortune: &d%{%player%::fortune}%%%" and "&5Rank Fortune: &d%{%player%::multi}%%%"
+		if {%player%::fortune} is 100:
+			set slot 4 of player to oak button named "&a&lLog &8- &c1" with lore "&5Tool Fortune: &d%{%player%::fortune}%%%" and "&5Rank Fortune: &d%{%player%::multi}%%%"

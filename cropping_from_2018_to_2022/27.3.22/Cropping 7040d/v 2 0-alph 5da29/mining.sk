@@ -1,0 +1,151 @@
+on block interact: 
+	if event-block is farmland:
+		cancel event
+		
+on drop:
+	if player's gamemode is not creative:
+		if event-item is chest:
+			execute player command "backpack"
+		cancel event
+				
+on damage:
+	if damage was caused by fall:
+		cancel event
+
+on break:
+	if player's gamemode is not creative:
+
+		# If not fully grown crop
+		if event-block is freshly planted wheat plant or stage 2 wheat plant or stage 3 wheat plant or stage 4 wheat plant or stage 5 wheat plant or stage 6 wheat plant or stage 7 wheat plant:
+			cancel drops
+			cancel event
+		if event-block is freshly planted carrot plant or stage 2 carrot plant or stage 3 carrot plant or stage 4 carrot plant or stage 5 carrot plant or stage 6 carrot plant or stage 7 carrot plant:
+			cancel drops
+			cancel event
+		if event-block is freshly planted potato plant or stage 2 potato plant or stage 3 potato plant or stage 4 potato plant or stage 5 potato plant or stage 6 potato plant or stage 7 potato plant:
+			cancel drops
+			cancel event
+
+
+		# Wheat
+		if event-block is fully grown wheat plant:
+			set {%player's uuid%::collected} to {%player's uuid%::wheat} + {%player's uuid%::carrot} + {%player's uuid%::potato} + {%player's uuid%::cactus} + {%player's uuid%::pumpkin} + {%player's uuid%::melon}
+			if ({%player's uuid%::collected} + 1) <= {%player's uuid%::backpackStorage}:
+				add 1 to {%player's uuid%::cropsMined}
+				
+				cancel drops
+
+				# Ding sound effect
+				play sound "entity.experience_orb.pickup" at volume 0.1 at pitch 10 to player
+				# Sending xp message to above hotbar
+				send action bar "&3+ %formatNum(1 + (0.05*{%player's uuid%::multi}))% xp | %formatNum({%player's uuid%::xp})%" to player
+
+				# Growing wheat
+				add 1 to {%player's uuid%::xp}
+				add 1 to {%player's uuid%::wheat}
+				set event-block to air
+				wait 0.5 seconds
+				set event-block to freshly planted wheat plant
+				wait 0.5 seconds
+				set event-block to stage 2 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 3 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 4 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 5 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 6 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 7 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 8 wheat plant
+			else:
+				send "&7[&6&lCROPPING&7] &cYour backpack is full."
+				play sound "block.note_block.bass" with volume 0.1 and pitch 0.1 to the player
+
+
+      	# Carrots
+		if event-block is fully grown carrot plant:
+			set {%player's uuid%::collected} to {%player's uuid%::wheat} + {%player's uuid%::carrot} + {%player's uuid%::potato} + {%player's uuid%::cactus} + {%player's uuid%::pumpkin} + {%player's uuid%::melon}
+			if ({%player's uuid%::collected} + 1) <= {%player's uuid%::backpackStorage}:
+				cancel drops
+				if {%player's uuid%::level} < 10:
+					cancel event
+					Send "&7[&6&lCROPPING&7] &cYou must be at least level 10 to farm carrots."
+				else:
+					add 1 to {%player's uuid%::cropsMined}
+					
+    				# Ding sound effect
+					play sound "entity.experience_orb.pickup" at volume 0.1 at pitch 10 to player
+
+					# Sending xp message to above hotbar
+					send action bar "&3+ %formatNum(5 + (0.05*{%player's uuid%::multi}))% xp | %formatNum({%player's uuid%::xp})%" to player
+
+	  	  			# Growing carrot
+					add 5 to {%player's uuid%::xp}
+					add 1 to {%player's uuid%::carrot}
+					set event-block to air
+					wait 0.5 seconds
+					set event-block to freshly planted carrot plant
+					wait 0.5 seconds
+					set event-block to stage 2 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 3 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 4 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 5 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 6 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 7 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 8 carrot plant
+			else:
+				send "&7[&6&lCROPPING&7] &cYour backpack is full."
+				play sound "block.note_block.bass" with volume 0.1 and pitch 0.1 to the player
+
+		if event-block is fully grown potato plant:
+		
+			set {%player's uuid%::collected} to {%player's uuid%::wheat} + {%player's uuid%::carrot} + {%player's uuid%::potato} + {%player's uuid%::cactus} + {%player's uuid%::pumpkin} + {%player's uuid%::melon}
+			if ({%player's uuid%::collected} + 1) <= {%player's uuid%::backpackStorage}:
+				cancel drops
+				if {%player's uuid%::level} < 25:
+				
+					cancel event
+					Send "&7[&6&lCROPPING&7] &cYou must be at least level 25 to farm potatoes."
+					
+				else:
+				
+					add 1 to {%player's uuid%::cropsMined}
+
+    				# Ding sound effect
+					play sound "entity.experience_orb.pickup" at volume 0.1 at pitch 10 at player
+					
+					# Sending xp message to above hotbar
+					send action bar "&3+ %formatNum(15 + (0.05*{%player's uuid%::multi}))% xp | %formatNum({%player's uuid%::xp})%" to player
+
+	  	  			# Growing potato
+					add 25 to {%player's uuid%::xp}
+					add 1 to {%player's uuid%::potato}
+					set event-block to air
+					wait 0.5 seconds
+					set event-block to freshly planted potato plant
+					wait 0.5 seconds
+					set event-block to stage 2 potato plant
+					wait 0.5 seconds
+					set event-block to stage 3 potato plant
+					wait 0.5 seconds
+					set event-block to stage 4 potato plant
+					wait 0.5 seconds
+					set event-block to stage 5 potato plant
+					wait 0.5 seconds
+					set event-block to stage 6 potato plant
+					wait 0.5 seconds
+					set event-block to stage 7 potato plant
+					wait 0.5 seconds
+					set event-block to stage 8 potato plant
+			else:
+				send "&7[&6&lCROPPING&7] &cYour backpack is full."
+				play sound "block.note_block.bass" with volume 0.1 and pitch 0.1 to the player

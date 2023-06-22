@@ -1,0 +1,23 @@
+every tick:
+	loop all players:
+		set {_levelMulti} to ({%loop-player's uuid%::prestige}/2)
+		set {_prestigeMulti} to (0.05 * {%loop-player's uuid%::level})
+		set {%loop-player's uuid%::multi} to (1 + {_levelMulti} + {_prestigeMulti})
+		set {_wheat} to (({%loop-player's uuid%::wheat} * 1) * {%loop-player's uuid%::multi})
+		set {_carrot} to (({%loop-player's uuid%::carrot} * 5) * {%loop-player's uuid%::multi})
+		set {_potato} to (({%loop-player's uuid%::potato} * 15) * {%loop-player's uuid%::multi})
+		set {_cactus} to (({%loop-player's uuid%::cactus} * 50) * {%loop-player's uuid%::multi})
+		set {_pumpkin} to (({%loop-player's uuid%::pumpkin} * 250) * {%loop-player's uuid%::multi})
+		set {_melon} to (({%loop-player's uuid%::melon} * 500) * {%loop-player's uuid%::multi})
+		set {%loop-player's uuid%::baseValue} to ({%loop-player's uuid%::wheat} * 1) + ({%loop-player's uuid%::carrot} * 5) + ({%loop-player's uuid%::potato} * 15) + ({%loop-player's uuid%::cactus} * 50) + ({%loop-player's uuid%::pumpkin} * 250) + ({%loop-player's uuid%::melon} * 500)
+		set {%loop-player's uuid%::sellValue} to {_wheat} + {_carrot} + {_potato} + {_cactus} + {_pumpkin} + {_melon}
+		wipe loop-player's sidebar
+		set name of sidebar of loop-player to "&6Player Stats"
+		set score "&eCollected Items&8&l: &6%formatNum({%loop-player's uuid%::collected})%" in sidebar of loop-player to 0
+		set score "&eSell Worth &8&l: &6$%formatNum(round({%loop-player's uuid%::sellValue}))%" in sidebar of loop-player to -10
+		set score "&ePrestige&8&l: &6%formatNum({%loop-player's uuid%::prestige})%" in sidebar of loop-player to -20
+		set score "&eLevel&8&l: &6%formatNum({%loop-player's uuid%::level})%" in sidebar of loop-player to -30
+		set score "&eXP&8&l: &6%formatNum({%loop-player's uuid%::xp})%/%formatNum(({%loop-player's uuid%::level} * 500) + 500)%" in sidebar of loop-player to -40
+		set score "&eBalance&8&l: &6$%formatNum({%loop-player's uuid%::bal})%" in sidebar of loop-player to -50
+		set score "&eCrops Mined&8&l: &6%formatNum({%loop-player's uuid%::cropsMined})%" in sidebar of loop-player to -60
+		set score "&eMultiplier &8&l: &6%{%loop-player's uuid%::multi}%x" in sidebar of loop-player to -70

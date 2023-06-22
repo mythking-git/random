@@ -1,0 +1,28 @@
+command /stats:
+	permission: op
+	trigger:
+		send ""
+		send "&nStats:"
+		send ""
+		send "&2&lFarming Level: &a%{%player%::flevel}%"
+		send "&2&lLevel Multi: &a%{%player%::multi}%"
+		send "&2&lLevel-Up: &a%{%player%::fxp}% &a/ %({%player%::flevel} * 500) + 500%"
+		send "&2&lPercentage: &a%{%player%::fxp} / (({%player%::flevel} * 500) + 500) *100%&a%%"
+		send "&2&lTotal XP: &a%{%player%::total}%"
+		send ""
+
+command /playerset <player>:
+	permission: op
+	trigger:
+		set {%player%::flevel} to 0
+		set {_f} to {%player%::flevel}/10
+		set {%player%::multi} to {_f}
+		set {%player%::fxp} to 0
+		set {%player%::total} to 0
+
+on first join:
+	if {%player%::flevel} is not set:
+		set {%player%::flevel} to 0
+		set {_f} to {%player%::flevel}/10
+		set {%player%::multi} to {_f}
+		set {%player%::fxp} to 0

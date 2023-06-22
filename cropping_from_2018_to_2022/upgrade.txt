@@ -1,0 +1,21 @@
+#   &7[&6&lCROPPING&7]
+
+options:
+	1 : "&7Pebble"
+	2 : "&8Stick"
+
+command /upgrade:
+	trigger:
+		if player is holding an air:
+			send "&7[&6&lCROPPING&7] &cYou need to actually hold something silly."
+			execute console command "playsound minecraft:block.note_block.bass master %{player}% ~ ~ ~ 10 0"
+		if player is holding an chest:
+			send "&7[&6&lCROPPING&7] &cUpgrade your backpack... not like this."
+			execute console command "playsound minecraft:block.note_block.bass master %{player}% ~ ~ ~ 10 0"
+		if player's tool is stone button:
+			if {%player%::money} >= 600:
+				add -600 to {%player%::money}
+				set slot 0 of player to 1 stick named {@2}
+			else:
+				send "&7[&6&lCROPPING&7] &cYou do not have $600."
+				execute console command "playsound minecraft:block.note_block.bass master %{player}% ~ ~ ~ 10 0"

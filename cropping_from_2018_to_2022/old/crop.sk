@@ -1,0 +1,36 @@
+#==========================================#
+#|       CROPPING by MythKing#9055        |#
+#==========================================#
+
+on break:
+	if event-block is stage eight wheat plant:
+		cancel drops
+		play sound "entity.experience_orb.pickup" at volume 0.1 at pitch 10 at player
+
+# XP ADD
+		add (1 + {%player%::multi}) to {_m}
+		add {_m} to {%player%::fxp}
+
+#ACTION BAR
+		send action bar "&3&l+ %{_m}%  &b%round({%player%::fxp})% / %{%player%::flevel} * 500 + 500% %round({%player%::fxp} / (({%player%::flevel} * 500) + 500) *100)%%%"  to player
+
+#LEVELUP
+		if {%player%::fxp} >= ({%player%::flevel} * 500) + 500:
+			add 1 to {%player%::flevel}
+			set {%player%::multi} to {%player%::flevel}/10
+			set {%player%::fxp} to 0
+			send "you leveled up"
+
+		set event-block to wheat plant
+		set {_s} to 2
+		loop 7 times:
+			set event-block to wheat plant
+			add 1 to {_s}
+			wait 1 second
+
+	if player is sneaking:
+		if player is op:
+			break event-block
+
+	else:
+		cancel event

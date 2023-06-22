@@ -1,0 +1,4 @@
+({%player's uuid%::wheat} * (1 + (0.05 * {%player's uuid%::level}))) + ({%player's uuid%::potato} * (25 + (0.05 * {%player's uuid%::level}))) + ({%player's uuid%::carrot} * (5 + (0.05 * {%player's uuid%::level}))) + ({%player's uuid%::pumpkin} * (25 + (0.05 * {%player's uuid%::level}))) + ({%player's uuid%::melon} * (25 + (0.05 * {%player's uuid%::level}))) + ({%player's uuid%::cactus} * (25 + (0.05 * {%player's uuid%::level})))
+
+
+formatNum((0.05*{%player's uuid%::level})*100)

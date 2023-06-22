@@ -1,0 +1,10 @@
+on join:
+	create bossbar titled "" and id "xp.%player's uuid%" for player with progress 100 with colors blue
+	set bossbar "xp.%player's uuid%" style to segmented 20
+
+every tick:
+	loop all players:
+		set {_value} to ({%loop-player's uuid%::xp} / ({%loop-player's uuid%::level} * 500 + 500)) * 100
+		set bossbar "xp.%loop-player's uuid%" value to {_value}
+		set bossbar "xp.%loop-player's uuid%" title to "&eXP Progress | %formatNum({%loop-player's uuid%::xp})% / %formatNum({%loop-player's uuid%::level} * 500 + 500)% | %round(({%loop-player's uuid%::xp} / ({%loop-player's uuid%::level} * 500 + 500)) * 100)%%%" 
+		wait 1 tick

@@ -1,0 +1,122 @@
+on block trample:
+	if event-block is farmland:
+		cancel event
+
+on break:
+	if player's gamemode is not creative:
+
+			# If not fully grown crop
+		if event-block is freshly planted wheat plant or stage 2 wheat plant or stage 3 wheat plant or stage 4 wheat plant or stage 5 wheat plant or stage 6 wheat plant or stage 7 wheat plant or freshly planted carrot plant or stage 2 carrot plant or stage 3 carrot plant or stage 4 carrot plant or stage 5 carrot plant or stage 6 carrot plant or stage 7 carrot plant:
+			cancel drops
+			cancel event
+
+		# Wheat
+		if event-block is fully grown wheat plant:
+			if (({%player's uuid%::wheat} + {%player's uuid%::carrot} + {%player's uuid%::potato} + {%player's uuid%::cactus} + {%player's uuid%::pumpkin} + {%player's uuid%::melon}) + 1) <= {%player's uuid%::backpackStorage}:
+				cancel drops
+
+				# Ding sound effect
+				play sound "entity.experience_orb.pickup" at volume 0.1 at pitch 10 at player
+				execute console command "playsound minecraft:entity.experience_orb.pickup master %{player}% ~ ~ ~ 10 0"
+				# Sending xp message to above hotbar
+				send action bar "&3&l+ %round(1 + (0.05*{%player's uuid%::multi}))%  &b%{%player's uuid%::xp}% / %{%player's uuid%::level} * 500 + 500% %round({%player's uuid%::xp} / (({%player's uuid%::level} * 500) + 500) *100)%%%" to player
+
+				# Growing wheat
+				add 1 to {%player's uuid%::xp}
+				add 1 to {%player's uuid%::wheat}
+				set event-block to air
+				wait 0.5 seconds
+				set event-block to freshly planted wheat plant
+				wait 0.5 seconds
+				set event-block to stage 2 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 3 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 4 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 5 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 6 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 7 wheat plant
+				wait 0.5 seconds
+				set event-block to stage 8 wheat plant
+			else:
+				send "&7[&6&lCROPPING&7] &cYour backpack is full."
+
+
+      	# Carrots
+		if event-block is fully grown carrot plant:
+			if (({%player's uuid%::wheat} + {%player's uuid%::carrot} + {%player's uuid%::potato} + {%player's uuid%::cactus} + {%player's uuid%::pumpkin} + {%player's uuid%::melon}) + 1) <= {%player's uuid%::backpackStorage}:
+				cancel drops
+				if {%player's uuid%::level} < 10:
+					cancel event
+					Send "&7[&6&lCROPPING&7] &cYou must be at least level 10 to farm carrots."
+				else:
+
+    				# Ding sound effect
+					play sound "entity.experience_orb.pickup" at volume 0.1 at pitch 10 at player
+					execute console command "playsound minecraft:entity.experience_orb.pickup master %{player}% ~ ~ ~ 10 0"
+
+    				# Sending xp message to above hotbar
+					send action bar "&3&l+ %round(5 + (0.05*{%player's uuid%::multi}))%  &b%{%player's uuid%::xp}% / %{%player's uuid%::level} * 500 + 500% %round({%player's uuid%::xp} / (({%player's uuid%::level} * 500) + 500) *100)%%%" to player
+
+	  	  			# Growing carrot
+					add 5 to {%player's uuid%::xp}
+					add 1 to {%player's uuid%::carrot}
+					set event-block to air
+					wait 0.5 seconds
+					set event-block to freshly planted carrot plant
+					wait 0.5 seconds
+					set event-block to stage 2 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 3 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 4 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 5 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 6 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 7 carrot plant
+					wait 0.5 seconds
+					set event-block to stage 8 carrot plant
+			else:
+				send "&7[&6&lCROPPING&7] &cYour backpack is full."
+
+		if event-block is fully grown potato plant:
+			if (({%player's uuid%::wheat} + {%player's uuid%::carrot} + {%player's uuid%::potato} + {%player's uuid%::cactus} + {%player's uuid%::pumpkin} + {%player's uuid%::melon}) + 1) <= {%player's uuid%::backpackStorage}:
+				cancel drops
+				if {%player's uuid%::level} < 25:
+					cancel event
+					Send "&7[&6&lCROPPING&7] &cYou must be at least level 25 to farm potatoes."
+				else:
+    				# Ding sound effect
+					play sound "entity.experience_orb.pickup" at volume 0.1 at pitch 10 at player
+					execute console command "playsound minecraft:entity.experience_orb.pickup master %{player}% ~ ~ ~ 10 0"
+
+    				# Sending xp message to above hotbar
+					send action bar "&3&l+ %round(25 + (0.05*{%player's uuid%::multi}))%  &b%{%player's uuid%::xp}% / %{%player's uuid%::level} * 500 + 500% %round({%player's uuid%::xp} / (({%player's uuid%::level} * 500) + 500) *100)%%%" to player
+
+	  	  			# Growing potato
+					add 25 to {%player's uuid%::xp}
+					add 1 to {%player's uuid%::potato}
+					set event-block to air
+					wait 0.5 seconds
+					set event-block to freshly planted potato plant
+					wait 0.5 seconds
+					set event-block to stage 2 potato plant
+					wait 0.5 seconds
+					set event-block to stage 3 potato plant
+					wait 0.5 seconds
+					set event-block to stage 4 potato plant
+					wait 0.5 seconds
+					set event-block to stage 5 potato plant
+					wait 0.5 seconds
+					set event-block to stage 6 potato plant
+					wait 0.5 seconds
+					set event-block to stage 7 potato plant
+					wait 0.5 seconds
+					set event-block to stage 8 potato plant
+			else:
+				send "&7[&6&lCROPPING&7] &cYour backpack is full."
