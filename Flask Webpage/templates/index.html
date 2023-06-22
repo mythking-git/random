@@ -1,0 +1,34 @@
+<h1>To-Do List</h1>
+
+<form action="/add" method="POST">
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title">
+    <br>
+    <label for="completed">Completed:</label>
+    <input type="checkbox" id="completed" name="completed">
+    <br>
+    <label for="due_date">Due Date:</label>
+    <input type="date" id="due_date" name="due_date">
+    <br>
+    <input type="submit" value="Add">
+</form>
+
+<ul>
+{% for todo in todos %}
+    <li>
+        <form action="/update/{{ todo.id }}" method="POST">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" value="{{ todo.title }}">
+            <br>
+            <label for="completed">Completed:</label>
+            <input type="checkbox" id="completed" name="completed" {% if todo.completed %}checked{% endif %}>
+            <br>
+            <label for="due_date">Due Date:</label>
+            <input type="date" id="due_date" name="due_date" value="{{ todo.due_date }}">
+            <br>
+            <input type="submit" value="Update">
+            <input type="submit" value="Delete" formaction="/delete/{{ todo.id }}" formmethod="POST">
+        </form>
+    </li>
+{% endfor %}
+</ul>
