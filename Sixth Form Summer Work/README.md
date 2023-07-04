@@ -30,7 +30,7 @@ output customer ID
 
 # Problem 2
 
-2. Write a program to:
+Write a program to:
     a. Ask the user to input
         i. The name of a product
         ii. Its cost in pounds
